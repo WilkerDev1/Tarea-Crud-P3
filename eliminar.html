@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Eliminar Tarea</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex justify-content-center align-items-center min-vh-100">
+
+  <div class="card shadow p-5 text-center" style="width: 100%; max-width: 500px;">
+    <h3 class="text-danger mb-4">Eliminar Tarea</h3>
+    <div id="contenido"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id"));
+    const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+    const tarea = tareas.find(t => t.id === id);
+    const contenedor = document.getElementById("contenido");
+
+    if (!tarea) {
+      contenedor.innerHTML = '<p class="text-danger">Tarea no encontrada.</p>';
+    } else {
+      contenedor.innerHTML = `
+        <p class="fw-semibold">¿Estás seguro de que deseas eliminar la siguiente tarea?</p>
+        <p><strong>Título:</strong> ${tarea.titulo}</p>
+        <p><strong>Descripción:</strong> ${tarea.descripcion}</p>
+        <p><strong>Fecha límite:</strong> ${tarea.fecha || '—'}</p>
+        <div class="mt-4 d-flex justify-content-between">
+          <button class="btn btn-danger w-45" onclick="confirmarEliminacion()">Eliminar</button>
+          <a href="ver.html" class="btn btn-secondary w-45">Cancelar</a>
+        </div>
+      `;
+    }
+
+    function confirmarEliminacion() {
+      const nuevasTareas = tareas.filter(t => t.id !== id);
+      localStorage.setItem("tareas", JSON.stringify(nuevasTareas));
+      contenedor.innerHTML = `
+        <p class="text-success fw-semibold">Tarea eliminada correctamente.</p>
+        <p>Redirigiendo al listado...</p>
+      `;
+      setTimeout(() => {
+        window.location.href = "ver.html";
+      }, 1500);
+    }
+  </script>
+
+</body>
+</html>
